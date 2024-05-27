@@ -35,10 +35,6 @@ class DataStream:
         self._transformers = transformers
         self._writers = writers
 
-    def filter(self, stream_entry, *args, **kwargs):
-        """Checks if an stream_entry should be filtered out (skipped)."""
-        return False
-
     def process(self, *args, **kwargs):
         """Iterates over the entries.
 
@@ -54,8 +50,7 @@ class DataStream:
                 transformed_entry = self.transform(stream_entry)
                 if transformed_entry.errors:
                     yield transformed_entry
-                elif self.filter(transformed_entry):
-                    transformed_entry.filtered = True
+                elif transformed_entry.filtered:
                     yield transformed_entry
                 else:
                     yield self.write(transformed_entry)
