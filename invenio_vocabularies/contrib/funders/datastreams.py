@@ -104,6 +104,10 @@ class RORTransformer(BaseTransformer):
                     }
                 )
 
+        # TODO: Temporary change for testing only.
+        # Keep only 1% of the 100'000+ items (which means keeping about 1'000 items).
+        stream_entry.filtered = funder["id"][-2:] != "11"
+
         stream_entry.entry = funder
         return stream_entry
 
