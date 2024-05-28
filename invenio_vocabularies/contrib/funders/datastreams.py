@@ -8,6 +8,7 @@
 # details.
 
 """Funders datastreams, transformers, writers and readers."""
+import datetime
 
 from idutils import normalize_ror
 from invenio_access.permissions import system_identity
@@ -107,6 +108,13 @@ class RORTransformer(BaseTransformer):
         # TODO: Temporary change for testing only.
         # Keep only 1% of the 100'000+ items (which means keeping about 1'000 items).
         stream_entry.filtered = funder["id"][-2:] != "11"
+        # Update titles of about 0.1% of the items at every run with the current datetime.
+        if funder["id"][-3:] == "111":
+            funder["title"]["en"] += (
+                " (Celery "
+                + datetime.datetime.now(tz=datetime.timezone.utc).isoformat()
+                + ")"
+            )
 
         stream_entry.entry = funder
         return stream_entry
