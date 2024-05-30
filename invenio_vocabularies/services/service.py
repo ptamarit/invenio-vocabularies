@@ -25,7 +25,6 @@ from invenio_records_resources.services.records.params import (
     FilterParam,
     SuggestQueryParser,
 )
-from invenio_records_resources.services.records.schema import ServiceSchemaWrapper
 from invenio_records_resources.services.uow import unit_of_work
 from invenio_search.engine import dsl
 
@@ -33,7 +32,7 @@ from ..records.api import Vocabulary
 from ..records.models import VocabularyType
 from .components import PIDComponent, VocabularyTypeComponent
 from .permissions import PermissionPolicy
-from .schema import TaskSchema, VocabularySchema
+from .schema import VocabularySchema
 from .tasks import process_datastream
 
 
@@ -87,7 +86,6 @@ class VocabulariesServiceConfig(RecordServiceConfig):
     permission_policy_cls = PermissionPolicy
     record_cls = Vocabulary
     schema = VocabularySchema
-    task_schema = TaskSchema
 
     search = VocabularySearchOptions
 
@@ -115,11 +113,6 @@ class VocabulariesServiceConfig(RecordServiceConfig):
 
 class VocabulariesService(RecordService):
     """Vocabulary service."""
-
-    @property
-    def task_schema(self):
-        """Returns the data schema instance."""
-        return ServiceSchemaWrapper(self, schema=self.config.task_schema)
 
     @unit_of_work()
     def create_type(self, identity, id, pid_type, uow=None):
@@ -211,21 +204,3 @@ class VocabulariesService(RecordService):
         )
 
         return self.result_list(self, identity, results)
-
-    def launch(self, identity, data):
-        """Create a task.
-
-        FIXME: This is a PoC. The final implementation should resemble
-        the PIDs, having a sub-service and a manager. If persistance is
-        added UoW should be used.
-        """
-        self.require_permission(identity, "manage")
-        task_config, _ = self.task_schema.load(
-            data,
-            context={"identity": identity},  # FIXME: is this needed
-            raise_errors=True,
-        )
-        process_datastream.delay(task_config)
-
-        # 202 if accepted, otherwise it will be caught by an error handler
-        return True

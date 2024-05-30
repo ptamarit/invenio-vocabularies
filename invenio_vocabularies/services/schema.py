@@ -131,23 +131,3 @@ class DatastreamObject(Schema):
 
     type = fields.Str(required=True)
     args = fields.Dict(keys=fields.Str(), values=fields.Field)
-
-
-class TaskSchema(Schema):
-    """Service schema for vocabulary tasks."""
-
-    readers = fields.List(
-        fields.Nested(DatastreamObject),
-        validate=validate.Length(min=1),
-        required=True,
-    )
-    transformers = fields.List(
-        fields.Nested(DatastreamObject),
-        validate=validate.Length(min=1),
-        required=False,
-    )
-    writers = fields.List(
-        fields.Nested(DatastreamObject),
-        validate=validate.Length(min=1),
-        required=True,
-    )

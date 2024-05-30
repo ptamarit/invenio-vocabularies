@@ -54,7 +54,7 @@ class VocabulariesResourceConfig(RecordResourceConfig):
 
     blueprint_name = "vocabularies"
     url_prefix = "/vocabularies"
-    routes = {"list": "/<type>", "item": "/<type>/<pid_value>", "tasks": "/tasks"}
+    routes = {"list": "/<type>", "item": "/<type>/<pid_value>"}
 
     request_view_args = {
         "pid_value": ma.fields.Str(),
@@ -86,9 +86,6 @@ class VocabulariesResource(RecordResource):
         """Create the URL rules for the record resource."""
         routes = self.config.routes
         rules = super().create_url_rules()
-        rules.append(
-            route("POST", routes["tasks"], self.launch),
-        )
         return rules
 
     @request_search_args
@@ -158,9 +155,3 @@ class VocabulariesResource(RecordResource):
             revision_id=resource_requestctx.headers.get("if_match"),
         )
         return "", 204
-
-    @request_data
-    def launch(self):
-        """Create a task."""
-        self.service.launch(g.identity, resource_requestctx.data or {})
-        return "", 202
