@@ -88,7 +88,13 @@ class ServiceWriter(BaseWriter):
         vocab_id = self._entry_id(entry)
         current = self._resolve(vocab_id)
         updated = dict(current.to_dict(), **entry)
-        return StreamEntry(self._service.update(self._identity, vocab_id, updated))
+        if updated == current:
+            return StreamEntry(current)
+        else:
+            return StreamEntry(
+                self._service.update(self._identity, vocab_id, updated)
+            )
+
 
     def write(self, stream_entry, *args, **kwargs):
         """Writes the input entry using a given service."""

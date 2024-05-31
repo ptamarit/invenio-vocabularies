@@ -46,7 +46,11 @@ def test_service_writer_duplicate(lang_type, lang_data, service, identity):
     assert expected_error in err.value.args
 
 
-def test_service_writer_update_existing(lang_type, lang_data, service, identity):
+def test_service_writer_update_existing_with_changes(
+    mocker, lang_type, lang_data, service, identity
+):
+    spy_service_update = mocker.spy(service, "update")
+
     # create vocabulary
     writer = ServiceWriter(service, identity=identity, update=True)
     lang = writer.write(stream_entry=StreamEntry(lang_data))
@@ -60,6 +64,28 @@ def test_service_writer_update_existing(lang_type, lang_data, service, identity)
     record = record.to_dict()
 
     assert dict(record, **updated_lang) == record
+    # The record is updated once after its creation.
+    assert spy_service_update.call_count == 1
+
+
+def test_service_writer_update_existing_without_changes(
+    mocker, lang_type, lang_data, service, identity
+):
+    spy_service_update = mocker.spy(service, "update")
+
+    # create vocabulary
+    writer = ServiceWriter(service, identity=identity, update=True)
+    lang = writer.write(stream_entry=StreamEntry(lang_data))
+    # identical copy of vocabulary
+    identical_lang = deepcopy(lang_data)
+    # check changes vocabulary
+    _ = writer.write(stream_entry=StreamEntry(identical_lang))
+    record = service.read(identity, ("languages", lang.entry.id))
+    record = record.to_dict()
+
+    assert dict(record, **identical_lang) == record
+    # The record is never updated after its creation.
+    assert spy_service_update.call_count == 0
 
 
 def test_service_writer_update_non_existing(lang_type, lang_data, service, identity):
