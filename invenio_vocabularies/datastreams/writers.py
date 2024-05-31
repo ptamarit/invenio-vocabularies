@@ -74,10 +74,14 @@ class ServiceWriter(BaseWriter):
                     raise WriterError([f"Vocabulary entry already exists: {entry}"])
                 vocab_id = self._entry_id(entry)
                 current = self._resolve(vocab_id)
-                updated = dict(current.to_dict(), **entry)
-                return StreamEntry(
-                    self._service.update(self._identity, vocab_id, updated)
-                )
+                current_dict = current.to_dict()
+                updated_dict = dict(current_dict, **entry)
+                if updated_dict == current_dict:
+                    return StreamEntry(current)
+                else:
+                    return StreamEntry(
+                        self._service.update(self._identity, vocab_id, updated_dict)
+                    )
 
         except ValidationError as err:
             raise WriterError([{"ValidationError": err.messages}])
