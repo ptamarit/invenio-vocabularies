@@ -14,25 +14,11 @@ from ..datastreams.factories import DataStreamFactory
 from ..factories import get_vocabulary_config
 
 
-@shared_task(ignore_result=True)
-def process_datastream(config):
-    """Process a datastream from config."""
-    ds = DataStreamFactory.create(
-        readers_config=config["readers"],
-        transformers_config=config.get("transformers"),
-        writers_config=config["writers"],
-    )
-
-    for result in ds.process():
-        if result.errors:
-            for err in result.errors:
-                current_app.logger.error(err)
-
-
 @shared_task(bind=True)
-def process_funders(self):
-    """Process the funders datastream."""
-    vc = get_vocabulary_config("funders")
+def process_datastream(self, vocabulary):
+    """Process a datastream from a vocabulary name."""
+
+    vc = get_vocabulary_config(vocabulary)
     config = vc.get_config()
 
     for w_conf in config["writers"]:
@@ -48,3 +34,10 @@ def process_funders(self):
         if result.errors:
             for err in result.errors:
                 current_app.logger.error(err)
+
+
+@shared_task(bind=True)
+def process_funders(self):
+    """Process the funders datastream."""
+
+    process_datastream("funders")
