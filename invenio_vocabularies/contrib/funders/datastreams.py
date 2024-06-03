@@ -9,6 +9,7 @@
 
 """Funders datastreams, transformers, writers and readers."""
 
+from ftfy import fix_text
 from idutils import normalize_ror
 from invenio_access.permissions import system_identity
 from invenio_i18n import lazy_gettext as _
@@ -103,6 +104,32 @@ class RORTransformer(BaseTransformer):
                         "scheme": scheme,
                     }
                 )
+
+        # TODO: Use SanitizedUnicode
+        #
+        #     from marshmallow_utils.fields import IdentifierSet, SanitizedUnicode
+        #
+        #     name = SanitizedUnicode(
+        #         required=True, validate=validate.Length(min=1, error=_("Name cannot be blank."))
+        #     )
+        # print(funder["name"])
+
+        # # Fails with FundersServiceWriter: [{'ValidationError': {'pid': ['Unknown field.']}}]
+        # try:
+        #     funder = FunderSchema().load(funder)
+        # except ValidationError as err:
+        #     raise TransformerError(_("Validation error for " + funder["id"]))
+
+        # Doing something similar to `SanitizedUnicode` on the only field causing differences.
+        # This is to make the optimization in `ServiceWriter` not updating unchanged records more efficient.
+        # Remark: It does mean that the updated records saved in the DB do not have these characters,
+        # while before it was only done during deserialization.
+        funder["name"] = fix_text(funder["name"]).replace(u'\u200b', '')
+
+        # breakpoint()
+        #fix_text("a")
+        #funder["name"] = funder["name"].replace("’", "'").replace("‘", "'").replace("“", '"').replace("”", '"').replace("\u200b", "")
+
 
         stream_entry.entry = funder
         return stream_entry
