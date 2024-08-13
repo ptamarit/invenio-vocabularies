@@ -121,6 +121,16 @@ class OpenAIREProjectTransformer(BaseTransformer):
                 )
             )
 
+        if funder_id != "00k4n6c32":
+            raise TransformerError(
+                _(
+                    "OpenAIRE funder prefix other than EC {openaire_funder_prefix}".format(
+                        openaire_funder_prefix=openaire_funder_prefix
+                    )
+                )
+            )
+
+
         award["id"] = f"{funder_id}::{code}"
 
         funding = next(iter(record.get("funding", [])), None)
