@@ -15,6 +15,7 @@ from marshmallow import Schema, ValidationError, fields, validate, validates_sch
 from marshmallow_utils.fields import IdentifierSet, SanitizedUnicode
 from marshmallow_utils.schemas import IdentifierSchema
 
+from ..subjects.schema import SubjectRelationSchema
 from ...services.schema import (
     BaseVocabularySchema,
     ModePIDFieldVocabularyMixin,
@@ -45,6 +46,8 @@ class AwardSchema(BaseVocabularySchema, ModePIDFieldVocabularyMixin):
     acronym = SanitizedUnicode()
 
     program = SanitizedUnicode()
+
+    subjects = fields.List(fields.Nested(SubjectRelationSchema))
 
     id = SanitizedUnicode(
         validate=validate.Length(min=1, error=_("PID cannot be blank."))
