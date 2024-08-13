@@ -20,6 +20,7 @@ from .contrib.awards.datastreams import DATASTREAM_CONFIG as awards_ds_config
 from .contrib.funders.datastreams import DATASTREAM_CONFIG as funders_ds_config
 from .contrib.names.datastreams import DATASTREAM_CONFIG as names_ds_config
 from .contrib.subjects.datastreams import DATASTREAM_CONFIG as subjects_ds_config
+from .contrib.projects.datastreams import DATASTREAM_CONFIG as projects_ds_config
 
 
 class VocabularyConfig:
@@ -95,6 +96,17 @@ class AffiliationsVocabularyConfig(VocabularyConfig):
         raise NotImplementedError("Service not implemented for Affiliations")
 
 
+class ProjectsVocabularyConfig(VocabularyConfig):  # TODO: Delete this config
+    """Projects Vocabulary Config."""
+
+    config = projects_ds_config
+    vocabulary_name = "projects"
+
+    def get_service(self):
+        """Get the service for the vocabulary."""
+        raise NotImplementedError("Service not implemented for Projects")
+
+
 def get_vocabulary_config(vocabulary):
     """Factory function to get the appropriate Vocabulary Config."""
     vocab_config = {
@@ -103,5 +115,6 @@ def get_vocabulary_config(vocabulary):
         "awards": AwardsVocabularyConfig,
         "affiliations": AffiliationsVocabularyConfig,
         "subjects": SubjectsVocabularyConfig,
+        "projects": ProjectsVocabularyConfig,
     }
     return vocab_config.get(vocabulary, VocabularyConfig)()
