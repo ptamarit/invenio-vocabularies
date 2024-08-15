@@ -61,6 +61,23 @@
         }
       },
       "uniqueItems": true
+    },
+    "organizations": {
+      "properties": {
+        "identifier": {
+          "type": "keyword"
+        },
+        "identifiers": {
+          "properties": {
+            "identifier": {
+              "type": "keyword"
+            },
+            "scheme": {
+              "type": "keyword"
+            }
+          }
+        }
+      }
     }
   }
 }
