@@ -277,7 +277,7 @@ VOCABULARIES_DATASTREAM_WRITERS = {
 }
 """ORCiD Data Streams transformers."""
 
-DATASTREAM_CONFIG = {
+DATASTREAM_CONFIG_CORDIS = {
     "readers": [
         {"type": "cordis-project-http"},
         {
@@ -311,7 +311,7 @@ DATASTREAM_CONFIG = {
 An origin is required for the reader.
 """
 
-DATASTREAM_CONFIG_OLD = {
+DATASTREAM_CONFIG = {
     "readers": [
         {
             "type": "tar",

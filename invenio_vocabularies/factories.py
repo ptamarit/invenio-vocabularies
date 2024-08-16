@@ -16,7 +16,7 @@ from invenio_records_resources.proxies import current_service_registry
 from .contrib.affiliations.datastreams import (
     DATASTREAM_CONFIG as affiliations_ds_config,
 )
-from .contrib.awards.datastreams import DATASTREAM_CONFIG as awards_ds_config
+from .contrib.awards.datastreams import DATASTREAM_CONFIG as awards_ds_config, DATASTREAM_CONFIG_CORDIS as awards_cordis_ds_config
 from .contrib.funders.datastreams import DATASTREAM_CONFIG as funders_ds_config
 from .contrib.names.datastreams import DATASTREAM_CONFIG as names_ds_config
 from .contrib.subjects.datastreams import DATASTREAM_CONFIG as subjects_ds_config
@@ -85,6 +85,17 @@ class AwardsVocabularyConfig(VocabularyConfig):
         raise NotImplementedError("Service not implemented for Awards")
 
 
+class AwardsCordisVocabularyConfig(VocabularyConfig):
+    """Awards Vocabulary Config."""
+
+    config = awards_cordis_ds_config
+    vocabulary_name = "awards:cordis"
+
+    def get_service(self):
+        """Get the service for the vocabulary."""
+        raise NotImplementedError("Service not implemented for CORDIS Awards")
+
+
 class AffiliationsVocabularyConfig(VocabularyConfig):
     """Affiliations Vocabulary Config."""
 
@@ -113,6 +124,7 @@ def get_vocabulary_config(vocabulary):
         "names": NamesVocabularyConfig,
         "funders": FundersVocabularyConfig,
         "awards": AwardsVocabularyConfig,
+        "awards:cordis": AwardsCordisVocabularyConfig,
         "affiliations": AffiliationsVocabularyConfig,
         "subjects": SubjectsVocabularyConfig,
         "projects": ProjectsVocabularyConfig,
