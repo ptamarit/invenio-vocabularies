@@ -63,21 +63,27 @@
       "uniqueItems": true
     },
     "organizations": {
-      "properties": {
-        "identifier": {
-          "type": "keyword"
-        },
-        "identifiers": {
-          "properties": {
-            "identifier": {
-              "type": "keyword"
-            },
-            "scheme": {
-              "type": "keyword"
-            }
+      "description": "Award's organizations.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "scheme": {
+            "description": "Identifier of the organization scheme.",
+            "$ref": "local://definitions-v1.0.0.json#/identifier"
+          },
+          "id": {
+            "description": "Identifier of the organization for the given scheme.",
+            "$ref": "local://definitions-v1.0.0.json#/identifier"
+          },
+          "organization": {
+            "description": "Human readable label.",
+            "type": "string"
           }
         }
-      }
+      },
+      "uniqueItems": true
     }
   }
 }

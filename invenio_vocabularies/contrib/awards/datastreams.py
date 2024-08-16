@@ -234,13 +234,9 @@ class CORDISProjectTransformer(BaseTransformer):
         award["organizations"] = [
             {
                 # TODO: Here the legal name is uppercase.
-                "name": organization["legalname"],
-                "identifiers": [
-                    {
-                        "scheme": "pic",
-                        "identifier": organization["id"],
-                    }
-                ],
+                "organization": organization["legalname"],
+                "scheme": "pic",
+                "id": organization["id"],
             }
             for organization in organizations
         ]

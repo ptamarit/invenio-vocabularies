@@ -79,18 +79,14 @@
       },
       "organizations": {
         "properties": {
-          "identifier": {
+          "scheme": {
             "type": "keyword"
           },
-          "identifiers": {
-            "properties": {
-              "identifier": {
-                "type": "keyword"
-              },
-              "scheme": {
-                "type": "keyword"
-              }
-            }
+          "id": {
+            "type": "keyword"
+          },
+          "organization": {
+            "type": "keyword"
           }
         }
       },
