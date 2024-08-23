@@ -35,11 +35,18 @@ VOCABULARIES_RESOURCE_CONFIG = VocabulariesResourceConfig
 VOCABULARIES_SERVICE_CONFIG = VocabulariesServiceConfig
 """Configure the service."""
 
+def is_pic(val):
+    """Test if argument is a Participant Identification Code (PIC)."""
+    if len(val) != 9:
+        return False
+    return val.isdigit()  # TODO: This is not only 0 to 9, but also some weird characters.
+
 VOCABULARIES_IDENTIFIER_SCHEMES = {
     "grid": {"label": _("GRID"), "validator": lambda x: True},
     "gnd": {"label": _("GND"), "validator": idutils.is_gnd},
     "isni": {"label": _("ISNI"), "validator": idutils.is_isni},
     "ror": {"label": _("ROR"), "validator": idutils.is_ror},
+    "pic": {"label": _("PIC"), "validator": is_pic},
 }
 """"Generic identifier schemes, usable by other vocabularies."""
 
@@ -102,6 +109,7 @@ VOCABULARIES_NAMES_SCHEMES = {
     "orcid": {"label": _("ORCID"), "validator": idutils.is_orcid, "datacite": "ORCID"},
     "isni": {"label": _("ISNI"), "validator": idutils.is_isni, "datacite": "ISNI"},
     "gnd": {"label": _("GND"), "validator": idutils.is_gnd, "datacite": "GND"},
+    "pic": {"label": _("PIC"), "validator": is_pic, "datacite": "PIC"},
 }
 """Names allowed identifier schemes."""
 
