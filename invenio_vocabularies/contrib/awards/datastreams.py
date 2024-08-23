@@ -279,14 +279,14 @@ VOCABULARIES_DATASTREAM_WRITERS = {
 
 DATASTREAM_CONFIG_CORDIS = {
     "readers": [
-        {"type": "cordis-project-http"},
-        {
-            "type": "zip",
-            "args": {
-                "regex": "\\.xml$",
-                "mode": "r",
-            },
-        },
+        # {"type": "cordis-project-http"},
+        # {
+        #     "type": "zip",
+        #     "args": {
+        #         "regex": "\\.xml$",
+        #         "mode": "r",
+        #     },
+        # },
         {
             "type": "xml",
             "args": {

@@ -15,6 +15,7 @@ from invenio_records_resources.proxies import current_service_registry
 
 from .contrib.affiliations.datastreams import (
     DATASTREAM_CONFIG as affiliations_ds_config,
+    DATASTREAM_CONFIG_OPENAIRE as affiliations_openaire_ds_config,
 )
 from .contrib.awards.datastreams import DATASTREAM_CONFIG as awards_ds_config, DATASTREAM_CONFIG_CORDIS as awards_cordis_ds_config
 from .contrib.funders.datastreams import DATASTREAM_CONFIG as funders_ds_config
@@ -107,6 +108,17 @@ class AffiliationsVocabularyConfig(VocabularyConfig):
         raise NotImplementedError("Service not implemented for Affiliations")
 
 
+class AffiliationsOpenAIREVocabularyConfig(VocabularyConfig):
+    """OpenAIRE Affiliations Vocabulary Config."""
+
+    config = affiliations_openaire_ds_config
+    vocabulary_name = "affiliations:openaire"
+
+    def get_service(self):
+        """Get the service for the vocabulary."""
+        raise NotImplementedError("Service not implemented for OpenAIRE Affiliations")
+
+
 class ProjectsVocabularyConfig(VocabularyConfig):  # TODO: Delete this config
     """Projects Vocabulary Config."""
 
@@ -127,6 +139,7 @@ def get_vocabulary_config(vocabulary):
         "awards:cordis": AwardsCordisVocabularyConfig,
         "affiliations": AffiliationsVocabularyConfig,
         "subjects": SubjectsVocabularyConfig,
+        "affiliations:openaire": AffiliationsOpenAIREVocabularyConfig,
         "projects": ProjectsVocabularyConfig,
     }
     return vocab_config.get(vocabulary, VocabularyConfig)()

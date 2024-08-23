@@ -43,6 +43,7 @@ class BaseReader(ABC):
                        Can be none in case of piped readers.
         """
         self._origin = origin
+        # breakpoint()
         self._mode = mode
 
     @abstractmethod
@@ -75,6 +76,7 @@ class TarReader(BaseReader):
     def __init__(self, *args, mode="r|gz", regex=None, **kwargs):
         """Constructor."""
         self._regex = re.compile(regex) if regex else None
+        # breakpoint()
         super().__init__(*args, mode=mode, **kwargs)
 
     def _iter(self, fp, *args, **kwargs):
@@ -86,6 +88,7 @@ class TarReader(BaseReader):
 
     def read(self, item=None, *args, **kwargs):
         """Opens a tar archive or uses the given file pointer."""
+        # breakpoint()
         if item:
             if isinstance(item, tarfile.TarFile):
                 yield from self._iter(fp=item, *args, **kwargs)
