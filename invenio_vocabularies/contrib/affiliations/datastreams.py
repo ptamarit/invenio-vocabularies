@@ -14,7 +14,7 @@ import requests
 from flask import current_app
 from invenio_i18n import lazy_gettext as _
 
-from ...datastreams.errors import ReaderError
+from ...datastreams.errors import ReaderError, WriterError
 from ...datastreams.readers import BaseReader
 from ...datastreams.transformers import BaseTransformer
 from ...datastreams.writers import ServiceWriter
@@ -115,10 +115,45 @@ class OpenAIREOrganizationTransformer(BaseTransformer):
                     "scheme": "pic",
                     "identifier": pid["value"]
                 }
-        organization["temp_openaire_id"] = record["id"]  # TODO: Remove this line.
+
+        organization["openaire_id"] = record["id"]
 
         stream_entry.entry = organization
         return stream_entry
+
+
+class OpenAIREAffiliationsServiceWriter(ServiceWriter):
+    """OpenAIRE Affiliations service writer."""
+
+    def __init__(self, *args, **kwargs):
+        """Constructor."""
+        service_or_name = kwargs.pop("service_or_name", "affiliations")
+        # Here we only update and we do not insert, since OpenAIRE data is used to augment existing affiliations
+        # (with PIC identifiers) and is not used to create new affiliations.
+        super().__init__(service_or_name=service_or_name, insert=False, *args, **kwargs)
+
+    def _entry_id(self, entry):
+        """Get the id from an entry."""
+        return entry["id"]
+
+    def write(self, stream_entry, *args, **kwargs):
+        entry = stream_entry.entry
+
+        if not entry["openaire_id"].startswith("openorgs____::"):
+            raise WriterError([f"Not valid OpenAIRE OpenOrgs id for : {entry}"])
+        del entry["openaire_id"]
+
+        if "id" not in entry:
+            raise WriterError([f"No id for : {entry}"])
+
+        if "identifiers" not in entry:
+            raise WriterError([f"No alternative identifiers for : {entry}"])
+
+        return super().write(stream_entry, *args, **kwargs)
+
+    def write_many(self, stream_entries, *args, **kwargs):
+        return super().write_many(stream_entries, *args, **kwargs)
+
 
 VOCABULARIES_DATASTREAM_READERS = {
     "openaire-organization-http": OpenAIREOrganizationHTTPReader,
@@ -127,6 +162,7 @@ VOCABULARIES_DATASTREAM_READERS = {
 
 VOCABULARIES_DATASTREAM_WRITERS = {
     "affiliations-service": AffiliationsServiceWriter,
+    "openaire-affiliations-service": OpenAIREAffiliationsServiceWriter,
 }
 """Affiliations datastream writers."""
 
@@ -191,7 +227,7 @@ DATASTREAM_CONFIG_OPENAIRE = {
             "type": "async",
             "args": {
                 "writer": {
-                    "type": "affiliations-service",
+                    "type": "openaire-affiliations-service",
                 }
             },
         }
