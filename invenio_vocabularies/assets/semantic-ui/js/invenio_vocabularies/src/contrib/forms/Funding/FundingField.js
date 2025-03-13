@@ -10,8 +10,8 @@ import PropTypes from "prop-types";
 import { FieldArray, getIn } from "formik";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
-import { Button, Form, Label, Icon, List } from "semantic-ui-react";
-import { FieldLabel } from "react-invenio-forms";
+import { Button, Form, Icon, List } from "semantic-ui-react";
+import { FieldLabel, FeedbackLabel } from "react-invenio-forms";
 
 import { FundingFieldItem } from "./FundingFieldItem";
 import FundingModal from "./FundingModal";
@@ -89,11 +89,6 @@ function FundingFieldForm(props) {
   const initialError = getIn(initialErrors, fieldPath, null);
   const fundingError = error || (fundingList === formikInitialValues && initialError);
 
-  // let className = "";
-  // if (fundingError) {
-  //   className = typeof fundingError !== "string" ? fundingError.severity : "error";
-  // }
-
   return (
     <DndProvider backend={HTML5Backend}>
       <Form.Field required={required}>
@@ -170,11 +165,7 @@ function FundingFieldForm(props) {
           />
         </Overridable>
 
-        {fundingError && typeof fundingError != "string" && (
-          <Label pointing="left" prompt>
-            {fundingError.message}
-          </Label>
-        )}
+        {fundingError && <FeedbackLabel errorMessage={fundingError} />}
       </Form.Field>
     </DndProvider>
   );
