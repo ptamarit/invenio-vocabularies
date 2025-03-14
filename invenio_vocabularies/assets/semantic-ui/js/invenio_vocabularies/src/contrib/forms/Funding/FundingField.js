@@ -89,9 +89,14 @@ function FundingFieldForm(props) {
   const initialError = getIn(initialErrors, fieldPath, null);
   const fundingError = error || (fundingList === formikInitialValues && initialError);
 
+  let className = "";
+  if (fundingError) {
+    className = typeof fundingError !== "string" ? fundingError.severity : "error";
+  }
+
   return (
     <DndProvider backend={HTML5Backend}>
-      <Form.Field required={required}>
+      <Form.Field required={required} className={className}>
         <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
         <List>
           {fundingList.map((value, index) => {
@@ -128,7 +133,7 @@ function FundingFieldForm(props) {
                 key="custom"
                 icon
                 labelPosition="left"
-                className="mb-5"
+                className={"mb-5 " + className}
               >
                 <Icon name="add" />
                 {i18next.t("Add")}
@@ -149,7 +154,13 @@ function FundingFieldForm(props) {
           <FundingModal
             searchConfig={searchConfig}
             trigger={
-              <Button type="button" key="custom" icon labelPosition="left">
+              <Button
+                type="button"
+                key="custom"
+                icon
+                labelPosition="left"
+                className={className}
+              >
                 <Icon name="add" />
                 {i18next.t("Add custom")}
               </Button>
